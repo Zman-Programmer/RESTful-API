@@ -29,6 +29,19 @@ def versionNumberFunction():
     newFeatures = request.json["newFeatures"]
     bugFixes = request.json["bugFixes"]
     return addNewUpdate(versionNumber, nameUpdate, newFeatures, bugFixes)
+
+# the endpoint for getting the latest update information quickly
+@app.route("/version/latest", methods = ['GET'])
+def latestVersion():
+  if request.method == 'GET':
+    return getLatestVersion()
+
+
+# the endpoint for getting the latest version number for checks
+@app.route("/version/latest/number", methods = ['GET'])
+def latestVersionNumber():
+  if request.method == 'GET':
+    return getLatestVersionNumber()
  
   
 # Endpoint for getting a specific version number, editing, or to delete a version number
@@ -72,6 +85,18 @@ def addNewUpdate(versionNumber, nameUpdate, newFeatures, bugFixes):
   session.commit()
   return jsonify(SoftwareUpdate=update.serialize)
 
+# Gets the latest version of update
+def getLatestVersion():
+  update = session.query(SoftwareUpdate).order_by(SoftwareUpdate.id.desc()).first()
+  return jsonify(SoftwareUpdate=[update.serialize])
+
+# Gets the latest version number of update
+def getLatestVersionNumber():
+  update = session.query(SoftwareUpdate).order_by(SoftwareUpdate.id.desc()).first()
+  versionNumber = update.versionNumber
+  print(versionNumber)
+  return jsonify(versionNumber=versionNumber)
+
 # Updates the update information
 def updateDescr(id, versionNumber, nameUpdate, newFeatures, bugFixes):
   update = session.query(SoftwareUpdate).filter_by(id = id).one()
@@ -93,6 +118,33 @@ def deleteUpdate(id):
   session.delete(update)
   session.commit()
   return "Removed update with version number %s" % versionNumber
+
+
+
+
+#SECURITY so that not anyone can add or get the information in the API
+@app.route('/api/users', methods = ['POST'])
+def new_user():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if username is None or password is None:
+        abort(400) # missing arguments
+    if session.query(User).filter_by(username = username).first() is not None:
+        abort(400) # existing user
+    user = User(username = username)
+    user.hash_password(password)
+    session.add(user)
+    session.commit()
+    return jsonify({ 'username': user.username }), 201, {'Location': url_for('get_user', id = user.id, _external = True)}
+
+@app.route('/api/users/<int:id>')
+def get_user(id):
+    user = session.query(User).filter_by(id=id).one()
+    if not user:
+        abort(400)
+    return jsonify({'username': user.username})
+
+
 
 
 # Handles error 404 so it returns JSON instead of HTML message
