@@ -6,9 +6,10 @@ from models import Base, SoftwareUpdate, User
 from flask_httpauth import HTTPBasicAuth
 from flask_login import LoginManager
 from redis import Redis
-from functools import update_wrapper
 redis = Redis()
 import time
+from functools import update_wrapper
+
 
 auth = HTTPBasicAuth() 
 engine = create_engine('sqlite:///softwareUpdate.db')
@@ -310,6 +311,7 @@ def index():
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = False
     app.run(host='0.0.0.0', port=5000)	
 

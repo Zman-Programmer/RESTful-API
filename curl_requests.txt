@@ -1,0 +1,42 @@
+Curl Requests: for software updates, version numbers, promotions, and news
+Scalability, security, ease of use
+
+1. Authentication
+
+Attempt to get data without auth:
+
+	curl -i http://127.0.0.1:5000/version
+
+Create a new admin user:
+
+	curl -i -H "Content-Type: application/json" -d '{"username":"user","password":"pass"}' -X POST http://127.0.0.1:5000/api/users
+
+Try to get data again:
+
+	curl -u user:pass -i http://127.0.0.1:5000/version
+
+Add data:
+	
+	curl -u user:pass -i -H "Content-Type: application/json" -X POST -d '{"versionNumber":"2.0.0", "nameUpdate":"Version 2", "newFeatures":"None", "bugFixes":"None"}' http://127.0.0.1:5000/version
+
+Bad practice to keep sending password and username, so get token:
+
+	curl -u user:pass -i http://127.0.0.1:5000/token
+
+Now use the token for all access:
+
+
+	curl -u <ACCESS_TOKEN>: -i http://127.0.0.1:5000/version
+	curl -u <ACCESS_TOKEN>: -i http://127.0.0.1:5000/version/latest
+	curl -u <ACCESS_TOKEN>: -i http://127.0.0.1:5000/version/latest/number
+	curl -d '{"versionNumber":"2.0.0", "nameUpdate":"Version 3", "newFeatures":"None", "bugFixes":"None"}' -H "Content-Type: application/json" -u test:test -i -X PUT http://127.0.0.1:5000/version/2
+	curl -u test:test -i -X DELETE http://127.0.0.1:5000/version/2
+
+Rate Limiting: Protect servers from DDOS attacks and makes more scalable
+
+	curl -i http://127.0.0.1:5000/rate-limited		# NOT FULLY IMPLEMENTED
+
+Messy so create a user friendly UI like V20 admin pages
+
+	http://127.0.0.1:5000/
+
