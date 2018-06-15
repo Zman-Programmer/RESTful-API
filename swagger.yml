@@ -1,0 +1,29 @@
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+basePath: "/version"
+
+# Paths supported by the server application
+paths:
+  /version:
+    get:
+      operationId: "endpoint.getAllVersion"
+      tags:
+        - "version"
+      summary: "The people data structure supported by the server application"
+      description: "Read the list of people"
+      responses:
+        200:
+          description: "Successful read people list operation"
+          schema:
+            type: "array"
+            items:
+              properties:
+                fname:
+                  type: "string"
+                lname:
+                  type: "string"
+                timestamp:
+                  type: "string"

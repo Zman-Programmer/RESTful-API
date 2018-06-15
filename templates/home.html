@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Update Information Table</title>
+ 
+    
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet" media="all">
+ 
+    <link href="../static/jumbotron-narrow.css" rel="stylesheet" media="all">
+    <link href="../static/index.css" rel="stylesheet" media="all">
+    
+  </head>
+
+ 
+  <body>
+ 
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="#">Promotions</a></li>
+            <li role="presentation" class="active"><a href="#">News</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Java Platform Update Information</h3>
+      </div>
+
+	    <table class="table table-striped">
+		    <tr><td style="width: 1px;"></td><td><b>Update Info</b></td><td><b>Options</b></td></tr>
+		    <tr>
+		        <td>
+		            <span class="label label-success">Done</span>
+		        </td>
+		        <td><p><b>Verison 1.0.0</b></p><p>New Feature: Something<br />Bug Fixes: Great!</p></td>
+		        <td>
+		            <button class="btn">Edit</button>
+		            <button class="btn">Delete</button>
+		            <span><button class="btn">Mark In Progress</button></span>
+		        </td>
+		    </tr>
+		    <tr>
+		        <td>
+		            <span class="label label-important">Done</span>
+		        </td>
+		        <td><p><b>Version 0.0.0</b></p><p>New Feature: None<br />Bug Fixes: None</p></td>
+		        <td>
+		            <button class="btn">Edit</button>
+		            <button class="btn">Delete</button>
+		            <span><button class="btn">Mark Done</button></span>
+		        </td>
+		    </tr>
+		</table>
+		<button class="btn">Add Task</button>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+                $('#btnSignIn').click(function() {
+             
+                    $.ajax({
+                        url: '/signIn',
+                        data: $('form').serialize(),
+                        type: 'POST',
+                        success: function(response) {
+                            window.location.replace("http://127.0.0.1:5000/home");
+                        },
+                        error: function(error) {
+                            $("#myModal").modal('show');
+                        }
+                    });
+                });
+            });
+    </script>
+  </body>
+</html>
