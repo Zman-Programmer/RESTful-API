@@ -1,0 +1,27 @@
+To get the API to run locally on your system:
+
+1. Clone this repo locally onto your computer
+
+2. Create a virtual environment in the cloned repo to install all dependent libraries:
+	Mac OS X or Linux:
+		sudo pip install virtualenv
+		virtualenv venv
+
+	Ubuntu:
+		sudo apt-get install python-virtualenv
+		virtualenv venv
+
+3. Activate the virtual by doing:
+	source ./venv/bin/activate
+
+4. Download all the dependent libraries:
+	pip install flask
+	pip install Flask-SQLAlchemy
+	pip install passlib
+	pip install flask-httpauth
+	pip install flask-login
+	pip install redis
+
+5. To get the RESTful API running:
+	export FLASK_APP=endpoints
+	flask run

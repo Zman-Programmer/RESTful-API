@@ -1,12 +1,7 @@
 from flask import Flask, request, jsonify, make_response, abort, render_template, json, g
-from models import Base, SoftwareUpdate, User
+from models import User
 from flask_httpauth import HTTPBasicAuth
-from flask_login import LoginManager
-from redis import Redis
-redis = Redis()
-import time
 from functions import *
-from functools import update_wrapper
 
 
 auth = HTTPBasicAuth() 
@@ -14,15 +9,20 @@ auth = HTTPBasicAuth()
 app = Flask(__name__, template_folder="templates") 
 
 
+### WEB FRONTEND ENDPOINTS ###
+
+# Login window
 @app.route("/")
 @app.route("/login")
 def home():
   return render_template('index.html')
 
+# Sign Up new user window
 @app.route('/showSignUp')
 def showSignUp():
     return render_template('signup.html')
 
+# The backend for the sign up window for when the sign up button is clicked
 @app.route('/signUp',methods=['POST'])
 def signUp():
  
@@ -34,6 +34,7 @@ def signUp():
     # validate the received values
     return add_new_user(_name, _password)
 
+# The backend for the sign in window for when the sign in button is clicked
 @app.route('/signIn', methods=['POST'])
 def signIn():
     #read in the username and password
@@ -41,14 +42,17 @@ def signIn():
     _password = request.form['inputPassword']
 
     if(verify_password(_name, _password) == True):
+      #! NEED TO GENERAGTE TOKEN AND STORE IT IN CACHE USING REDIS !#
       return jsonify({ 'Login Status': 'True' }), 200
     
     return jsonify({ 'Login Status': 'False' }), 301
 
-
+# The main homepage after logging in, if the credentials of the sign in is valid, then show home
 @app.route('/home')
+@auth.login_required
 def homePage():
   return render_template('home.html')
+
 
 @app.route('/api/users/<int:id>')
 def get_user(id):
@@ -70,8 +74,6 @@ def verify_password(username_or_token, password):
     g.user = user
     return True
 
-
-# the route get or post for the version number or to add a version number (Need to edit POST to work with curl)
 # curl -i -H "Content-Type: application/json" -X POST -d '{"versionNumber":"1.0.0", "nameUpdate":"Version 1", "newFeatures":"None", "bugFixes":"None"}' http://127.0.0.1:5000/version
 @app.route("/version", methods = ['GET', 'POST'])
 @auth.login_required
@@ -134,7 +136,6 @@ def get_auth_token():
     return jsonify({'token': token.decode('ascii')})
 
 
-#SECURITY so that not anyone can add or get the information in the API
 @app.route('/api/users', methods = ['POST'])
 def new_user():
   if request.method == 'POST':
@@ -160,24 +161,6 @@ def bad_request(error):
 @app.errorhandler(401)
 def bad_request(error):
   return make_response(jsonify({'error': 'Authentication Required: Data protected.'}), 401)
-
-
-"""@app.after_request
-def inject_x_rate_headers(response):
-    limit = get_view_rate_limit()
-    if limit and limit.send_x_headers:
-        h = response.headers
-        h.add('X-RateLimit-Remaining', str(limit.remaining))
-        h.add('X-RateLimit-Limit', str(limit.limit))
-        h.add('X-RateLimit-Reset', str(limit.reset))
-    return response
-
-@app.route('/rate-limited')
-@ratelimit(limit=5, per=30 * 1)
-def index():
-    return jsonify({'response':'This is a rate limited response'})"""
-
-
 
 
 if __name__ == '__main__':
