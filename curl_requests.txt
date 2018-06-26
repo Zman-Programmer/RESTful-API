@@ -3,6 +3,8 @@ Java GUI API Proof of Concept : Work Term Report
 Curl Requests: for software updates, version numbers, promotions, and news
 Scalability, security, ease of use, cleaner code, and more structure
 
+Note: Refer to setup.txt to ensure your system is set up correctly and run ensure redis server is running as well
+
 1. Authentication
 
 Attempt to get data without auth:

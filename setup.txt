@@ -22,6 +22,13 @@ To get the API to run locally on your system:
 	pip install flask-login
 	pip install redis
 
-5. To get the RESTful API running:
+5. Get your reset server running first
+	redis-server
+	
+	To check if the server is up and running: redis-cli
+
+6. To get the RESTful API running:
 	export FLASK_APP=endpoints
 	flask run
+
+7. Either run through curl_requests.txt to manually test or run unit tests to check functionality

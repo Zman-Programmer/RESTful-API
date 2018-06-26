@@ -1,3 +1,12 @@
+from redis import Redis
+redis = Redis()
+
+import time
+from functools import update_wrapper
+from flask import request, g
+from flask import Flask, jsonify 
+
+# Rate limit class to limit number of requests to API endpoints by IP address (prevents DDOS attacks to server)
 class RateLimit(object):
     expiration_window = 10
 
@@ -15,9 +24,11 @@ class RateLimit(object):
     remaining = property(lambda x: x.limit - x.current)
     over_limit = property(lambda x: x.current >= x.limit)
 
+# Show the rate limit information
 def get_view_rate_limit():
     return getattr(g, '_view_rate_limit', None)
 
+# Throws a 429 (rate limit) JSON error message when limit is hit
 def on_over_limit(limit):
     return (jsonify({'data':'You hit the rate limit','error':'429'}),429)
 
@@ -35,19 +46,3 @@ def ratelimit(limit, per=300, send_x_headers=True,
             return f(*args, **kwargs)
         return update_wrapper(rate_limited, f)
     return decorator
-
-
-"""@app.after_request
-def inject_x_rate_headers(response):
-    limit = get_view_rate_limit()
-    if limit and limit.send_x_headers:
-        h = response.headers
-        h.add('X-RateLimit-Remaining', str(limit.remaining))
-        h.add('X-RateLimit-Limit', str(limit.limit))
-        h.add('X-RateLimit-Reset', str(limit.reset))
-    return response
-
-@app.route('/rate-limited')
-@ratelimit(limit=5, per=30 * 1)
-def index():
-    return jsonify({'response':'This is a rate limited response'})"""
