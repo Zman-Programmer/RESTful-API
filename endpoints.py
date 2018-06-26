@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, abort, render_template, json, g
+from flask import Flask, request, jsonify, make_response, abort, render_template, json, g, redirect, url_for, request
 from models import User
 from flask_httpauth import HTTPBasicAuth
 from functions import *
@@ -55,7 +55,6 @@ def sign_in():
     _password = request.form['inputPassword']
 
     if verify_password(_name, _password):
-        # get_auth_token()
         return jsonify({'Login Status': 'True'}), 200
 
     return jsonify({'Login Status': 'False'}), 301
